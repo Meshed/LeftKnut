@@ -2,22 +2,20 @@ using UnityEngine;
 using System.Collections;
 
 public class scriptSilo : MonoBehaviour {
-	public int maxStorage = 100;
-	public int currentStorageLevel = 0;
+	public int MaxStorage = 100;
+	public int CurrentStorageLevel;
 	
 	void Update () {
 	
 	}
 	
-	void Deposit(int quantity)
+	public bool Deposit(int quantity)
 	{
-		if((currentStorageLevel + quantity) > maxStorage)
-		{
-			print("Storage is full");
-		}
-		else
-		{
-			currentStorageLevel += quantity;
-		}
+	    if ((CurrentStorageLevel + quantity) > MaxStorage)
+	        return false;
+
+	    CurrentStorageLevel += quantity;
+
+	    return true;
 	}
 }

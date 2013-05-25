@@ -1,102 +1,109 @@
 using UnityEngine;
-using System.Collections;
 
 public class scriptHarvester : MonoBehaviour {
-	public bool selected = false;
-	public int maxInventorySize = 20;
-	public int currentInventorySize = 0;
-	public int harvestRateInSeconds = 5;
-	public float harvestRateCounter = 0.0f;
-	public Color baseColor;
-	public bool selecting = false;
-	public Transform target;
-	public float rayDistance = 100.0f;
-	public float moveSpeed = 1.0f;
-	public bool moving = false;
-	public float minimumDistanceFromTarget = 2.0f;
-	public float currentDistanceToTarget = 0.0f;
-	public bool harvestingMode = false;
-	public Transform targetNode;
-	public Transform targetSilo;
-	
-	private Vector3 movingStartPosition;
+    public int HarvestRateInSeconds = 5;
+    public float MinimumDistanceFromTarget = 2.0f;
+    public float MoveSpeed = 1.0f;
+    public Transform TargetNode;
+    public Transform TargetSilo;
+    public int MaxInventorySize = 20;
+    public float MaxHarvestDistance = 3.0f;
 
-	void Start () {
-	}
-	
+    private float _harvestRateCounter;
+    private int _currentInventorySize;
+    private float _currentDistanceToTarget;
+    private Transform _target;
+
 	void Update () 
 	{
-		if(transform.GetComponent<scriptCanSelect>().selected)
-		{
-			GetTarget();
-		}
-		
+	    GetTarget();
 		GetDistanceToTarget();
-		moving = (currentDistanceToTarget > minimumDistanceFromTarget);
-		
-		if(moving)
-		{
-			transform.position = Vector3.Lerp(transform.position, target.position, moveSpeed * Time.deltaTime);
-		}
-		
-		if(target && moving == false)
-		{
-			if(currentInventorySize < maxInventorySize)
-			{
-				harvestingMode = true;
-				GatherResources();
-			}
-			else
-			{
-				target = targetSilo;
-			}
-		}
-	}
-	
-	void GetTarget()
-	{
-		if (Input.GetMouseButtonDown (1)) {
-			RaycastHit hit;
-			Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		MoveToTarget();
 
-			if (Physics.Raycast (ray, out hit, rayDistance)) {
-				target = hit.transform;
-			}
-		}
+	    if (_target == TargetNode)
+	    {
+	        GatherResources();
+	    }
+	    else
+	    {
+	        DepositResources();
+	    }
 	}
-	
-	void GetDistanceToTarget()
+
+    private void GetTarget()
+    {
+        _target = _currentInventorySize < MaxInventorySize ? TargetNode : TargetSilo;
+    }
+    private void GetDistanceToTarget()
 	{
-		if(target)
+		if(_target)
 		{
-			currentDistanceToTarget = Vector3.Distance(transform.position, target.position);
+			_currentDistanceToTarget = Vector3.Distance(transform.position, _target.position);
 		}
 	}
-	
-	void GatherResources()
+	private void MoveToTarget()
 	{
-		harvestRateCounter += Time.deltaTime;
+		if(_currentDistanceToTarget > MinimumDistanceFromTarget)
+		{
+			transform.position = Vector3.Lerp(transform.position, _target.position, MoveSpeed * Time.deltaTime);
+		}
+	}
+	private void GatherResources()
+	{
+	    if (_currentDistanceToTarget <= MaxHarvestDistance)
+	    {
+		    _harvestRateCounter += Time.deltaTime;
 		
-		if(harvestRateCounter >= harvestRateInSeconds)
-		{
-			print("Gather Resources");
-			scriptNode script = target.GetComponent<scriptNode>();
-			currentInventorySize += script.Harvest();
-			ResetHarvestCounter();
-		}
-	}
-	
-	void ResetHarvestCounter()
+		    if(_harvestRateCounter >= HarvestRateInSeconds)
+		    {
+		        HarvestNode();
+		    }
+        }
+    }
+    private void HarvestNode()
+    {
+        if (_target)
+        {
+            var script = _target.GetComponent<scriptNode>();
+
+            if (script)
+            {
+                _currentInventorySize += script.Harvest();
+                if (_currentInventorySize >= MaxInventorySize)
+                {
+                    _currentInventorySize = MaxInventorySize;
+                }
+
+                ResetHarvestCounter();
+            }            
+        }
+    }
+    private void ResetHarvestCounter()
 	{
-		harvestRateCounter = 0.0f;
+		_harvestRateCounter = 0.0f;
 	}
-	
-	void SetToSelectedColor()
-	{
-		renderer.material.color = Color.green;
-	}
-	void SetToStandardColor()
-	{
-		renderer.material.color = baseColor;
-	}
+    private void DepositResources()
+    {
+        if (_currentDistanceToTarget <= MaxHarvestDistance)
+        {
+            _harvestRateCounter += Time.deltaTime;
+
+            if (_harvestRateCounter >= HarvestRateInSeconds)
+            {
+                DepositToSilo();
+            }
+        }
+    }
+    private void DepositToSilo()
+    {
+        var silo = _target.GetComponent<scriptSilo>();
+
+        if (silo)
+        {
+            if (silo.Deposit(_currentInventorySize))
+            {
+                _currentInventorySize = 0;
+            }
+        }
+    }
 }

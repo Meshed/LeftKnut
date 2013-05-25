@@ -1,27 +1,45 @@
 using UnityEngine;
-using System.Collections;
 
 public class scriptNode : MonoBehaviour {
-	public int harvestRate = 10;
-	public int totalHarvestRemaining = 100;
-	public Transform explosion;
+	public int HarvestRate = 10;
+	public int TotalHarvestRemaining = 100;
+	public Transform Explosion;
 
-	// Update is called once per frame
 	void Update () {
-		if(totalHarvestRemaining < 0)
+		if(TotalHarvestRemaining <= 0)
 		{
 			print("Node is empty");
 		}
 	}
-	
+
 	public int Harvest()
 	{
-		if(explosion)
-		{
-			Transform temp = (Transform)Instantiate(explosion, transform.position, transform.rotation);
-			Destroy(temp.gameObject, temp.particleSystem.duration + temp.particleSystem.startLifetime);
-		}
-		
-		return harvestRate;
+	    if (TotalHarvestRemaining > 0)
+	    {
+		    if(Explosion)
+		    {
+			    var temp = (Transform)Instantiate(Explosion, transform.position, transform.rotation);
+			    Destroy(temp.gameObject, temp.particleSystem.duration + temp.particleSystem.startLifetime);
+		    }
+
+            DescreaseRemainingHarvest();
+
+            return GetHarvestAmount();
+        }
+
+	    return 0;
 	}
+
+    private int GetHarvestAmount()
+    {
+        return TotalHarvestRemaining >= HarvestRate ? HarvestRate : TotalHarvestRemaining;
+    }
+    private void DescreaseRemainingHarvest()
+    {
+        TotalHarvestRemaining -= HarvestRate;
+        if (TotalHarvestRemaining < 0)
+        {
+            TotalHarvestRemaining = 0;
+        }
+    }
 }

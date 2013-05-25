@@ -1,16 +1,26 @@
 using UnityEngine;
-using System.Collections;
 
 public class scriptCanSelect : MonoBehaviour {
-	public bool selected = false;
+	public bool Selected;
+    public Color BaseColor;
 	
 	public void Select()
 	{
-		selected = true;
+		Selected = true;
+        SetToSelectedColor();
 	}
-	
 	public void Deselect()
 	{
-		selected = false;
+		Selected = false;
+        SetToStandardColor();
 	}
+
+    void SetToSelectedColor()
+    {
+        renderer.material.color = Color.green;
+    }
+    void SetToStandardColor()
+    {
+        renderer.material.color = BaseColor;
+    }
 }
