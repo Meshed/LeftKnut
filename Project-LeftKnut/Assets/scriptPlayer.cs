@@ -26,6 +26,7 @@ public class scriptPlayer : MonoBehaviour {
         {
             if (Selected)
             {
+				Debug.Log(Selected);
                 Selected.GetComponent<scriptCanSelect>().Deselect();
             }
 
