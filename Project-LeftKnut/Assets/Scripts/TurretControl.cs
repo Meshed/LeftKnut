@@ -6,10 +6,11 @@ public class TurretControl : MonoBehaviour {
 	public Transform _GunForward;
 	public Transform[] _Muzzles;
 	public GameObject _Bullet;
-	public float _FireRate = 2;
+	public float FireRate = 2;
 	public float _AimError = 1f;
-	
-	GameObject _currentTarget;
+    public float AimSpeed = 3.0f;
+	public GameObject CurrentTarget;
+
 	float _timeSinceLastFiring;
 	
 	
@@ -21,19 +22,19 @@ public class TurretControl : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
-		if(_currentTarget == null)
+		if(CurrentTarget == null)
 		{
-			_currentTarget = FindClosestEnemy();
+			CurrentTarget = FindClosestEnemy();
 		}
 		
-		if(_currentTarget != null)
+		if(CurrentTarget != null)
 		{
 			
-			AimTowardsTarget(_currentTarget);
+			AimTowardsTarget();
 			
 			_timeSinceLastFiring = _timeSinceLastFiring + Time.deltaTime;
 		
-			if(_timeSinceLastFiring > _FireRate)
+			if(_timeSinceLastFiring > FireRate)
 			{
 				_timeSinceLastFiring = 0;
 				
@@ -45,15 +46,14 @@ public class TurretControl : MonoBehaviour {
 		}
 	}
 	
-	private void AimTowardsTarget(GameObject currentTarget)
+	private void AimTowardsTarget()
 	{
-		var targetDir = _currentTarget.transform.position - _GunForward.position;
+		var targetDir = CurrentTarget.transform.position - _GunForward.position;
 		targetDir = new Vector3(targetDir.x + GetAimError(),targetDir.y + GetAimError(),targetDir.z + GetAimError());
 		
 		var desiredRotation = Quaternion.LookRotation(targetDir);
 		
-		var step = 1 * Time.deltaTime;
-		_GunForward.rotation =  Quaternion.Lerp(_GunForward.rotation, desiredRotation, step);
+		_GunForward.rotation =  Quaternion.Lerp(_GunForward.rotation, desiredRotation, AimSpeed * Time.deltaTime);
 	}
 	
 	private float GetAimError()

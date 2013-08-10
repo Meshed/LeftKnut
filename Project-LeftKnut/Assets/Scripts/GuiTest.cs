@@ -16,7 +16,8 @@ public class GuiTest : MonoBehaviour {
 		
 		
 		if(_isObjectAttached && Input.GetMouseButtonDown(0)){
-			_isObjectAttached = false;
+            print("Plant turret");
+            _isObjectAttached = false;
 			_ObjectAttaced = null;
 		}
 	
