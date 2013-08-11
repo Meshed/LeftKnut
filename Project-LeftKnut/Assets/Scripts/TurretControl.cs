@@ -12,7 +12,7 @@ public class TurretControl : MonoBehaviour {
 	public GameObject CurrentTarget;
 
 	float _timeSinceLastFiring;
-	
+	private bool _isPlaced = false;
 	
 	// Use this for initialization
 	void Start () {
@@ -21,7 +21,11 @@ public class TurretControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+	    if (!_isPlaced)
+	    {
+	        return;
+	    }
+
 		if(CurrentTarget == null)
 		{
 			CurrentTarget = FindClosestEnemy();
@@ -45,6 +49,11 @@ public class TurretControl : MonoBehaviour {
 			}
 		}
 	}
+
+    public void PlaceTurret()
+    {
+        _isPlaced = true;
+    }
 	
 	private void AimTowardsTarget()
 	{

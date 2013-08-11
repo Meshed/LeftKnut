@@ -15,8 +15,10 @@ public class GuiTest : MonoBehaviour {
 	void Update(){
 		
 		
-		if(_isObjectAttached && Input.GetMouseButtonDown(0)){
-            print("Plant turret");
+		if(_isObjectAttached && Input.GetMouseButtonDown(0))
+		{
+		    var turretScript = _ObjectAttaced.transform.GetComponent<TurretControl>();
+            turretScript.PlaceTurret();
             _isObjectAttached = false;
 			_ObjectAttaced = null;
 		}
