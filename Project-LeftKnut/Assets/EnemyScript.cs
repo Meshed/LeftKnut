@@ -46,7 +46,10 @@ public class EnemyScript : MonoBehaviour
     }
     private void MoveToTarget()
     {
-        transform.position = Vector3.Lerp(transform.position, ClosestTarget.transform.position, MoveSpeed * Time.deltaTime);
+        if (ClosestTarget)
+        {
+            transform.position = Vector3.Lerp(transform.position, ClosestTarget.transform.position, MoveSpeed * Time.deltaTime);
+        }
     }
     private void GetTarget()
     {

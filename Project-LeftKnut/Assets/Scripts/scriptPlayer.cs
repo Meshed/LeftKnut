@@ -4,18 +4,58 @@ public class scriptPlayer : MonoBehaviour {
 	public Transform Target;
 	public Transform Selected;
 	public float RayDistance = 100.0f;
-	
-	void Update () {
+    public GameObject Enemy;
+    public float FirstEnemySpawnTimer = 15.0f;
+    public float EnemyWaveSpawnTimer = 10.0f;
+
+    private float _timeSinceLevelStart = 0.0f;
+    private float _timeSinceLastWave = 0.0f;
+    private int _currentEnemyWave = 0;
+
+    void Update()
+    {
+        HandleUserInput();
+
+        HandleEnemyWaves();
+    }
+
+    private void HandleEnemyWaves()
+    {
+        if (_currentEnemyWave == 0)
+        {
+            _timeSinceLevelStart += Time.deltaTime;
+
+            if (_timeSinceLevelStart > FirstEnemySpawnTimer)
+            {
+                SpawnEnemyWave();
+                _currentEnemyWave++;
+            }
+        }
+        else
+        {
+            _timeSinceLastWave += Time.deltaTime;
+
+            if (_timeSinceLastWave > EnemyWaveSpawnTimer)
+            {
+                SpawnEnemyWave();
+                _currentEnemyWave++;
+                _timeSinceLastWave = 0f;
+            }
+        }
+    }
+    private void HandleUserInput()
+    {
         // Handle left click
-		if (Input.GetMouseButtonDown (0)) {
-			HandleLeftClick();
-		}
+        if (Input.GetMouseButtonDown(0))
+        {
+            HandleLeftClick();
+        }
         // Handle right click
-		else if (Input.GetMouseButtonDown(1))
-		{
+        else if (Input.GetMouseButtonDown(1))
+        {
             HandleRightClick();
-		}
-	}
+        }
+    }
 
     private void HandleLeftClick()
     {
@@ -76,5 +116,42 @@ public class scriptPlayer : MonoBehaviour {
         {
             Selected = null;
         }
+    }
+    private void SpawnEnemyWave()
+    {
+        for (int i = 0; i < _currentEnemyWave; i++)
+        {
+            SpawnEnemy();
+        }
+    }
+    private void SpawnEnemy()
+    {
+        Vector3 spawnNodePosition;
+        var topSpawnPosition = new Vector3(Random.Range(-100f, 100f), 0f, 175f);
+        var rightSpawnPosition = new Vector3(150f, 0, Random.Range(0f, 150f));
+        var bottomSpawnPosition = new Vector3(Random.Range(-100f, 100f), 0f, -33f);
+        var leftSpawnPosition = new Vector3(-140f, 0f, Random.Range(0f, 150f));
+        int enemySpawnNode = Random.Range(1, 4);
+
+        switch (enemySpawnNode)
+        {
+            case 1:
+                spawnNodePosition = topSpawnPosition;
+                break;
+            case 2:
+                spawnNodePosition = rightSpawnPosition;
+                break;
+            case 3:
+                spawnNodePosition = bottomSpawnPosition;
+                break;
+            case 4:
+                spawnNodePosition = leftSpawnPosition;
+                break;
+            default:
+                spawnNodePosition = bottomSpawnPosition;
+                break;
+        }
+
+        Instantiate(Enemy, spawnNodePosition, new Quaternion());
     }
 }

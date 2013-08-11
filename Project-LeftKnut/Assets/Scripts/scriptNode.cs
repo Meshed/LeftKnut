@@ -5,11 +5,14 @@ public class scriptNode : MonoBehaviour {
 	public int TotalHarvestRemaining = 100;
 	public Transform Explosion;
 
+    private bool _isAlive = true;
+
 	void Update () {
-		if(TotalHarvestRemaining <= 0)
-		{
-			print("Node is empty");
-		}
+	    if (_isAlive == false)
+	    {
+            print("Node is empty");
+            Destroy(gameObject);
+	    }
 	}
 
 	public int Harvest()
@@ -22,10 +25,11 @@ public class scriptNode : MonoBehaviour {
 			    Destroy(temp.gameObject, temp.particleSystem.duration + temp.particleSystem.startLifetime);
 		    }
 
+	        int harvestedAmount = GetHarvestAmount();
             DescreaseRemainingHarvest();
 
-            return GetHarvestAmount();
-        }
+	        return harvestedAmount;
+	    }
 
 	    return 0;
 	}
@@ -37,9 +41,9 @@ public class scriptNode : MonoBehaviour {
     private void DescreaseRemainingHarvest()
     {
         TotalHarvestRemaining -= HarvestRate;
-        if (TotalHarvestRemaining < 0)
+        if (TotalHarvestRemaining <= 0)
         {
-            TotalHarvestRemaining = 0;
+            _isAlive = false;
         }
     }
 }
