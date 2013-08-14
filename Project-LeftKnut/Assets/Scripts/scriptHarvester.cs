@@ -41,13 +41,18 @@ public class scriptHarvester : MonoBehaviour {
 			_currentDistanceToTarget = Vector3.Distance(transform.position, _target.position);
 		}
 	}
+	
 	private void MoveToTarget()
 	{
+
 		if(_currentDistanceToTarget > MinimumDistanceFromTarget)
 		{
+			transform.LookAt(new Vector3(_target.position.x, transform.position.y, _target.position.z));
+			
 			transform.position = Vector3.Lerp(transform.position, _target.position, MoveSpeed * Time.deltaTime);
 		}
 	}
+	
 	private void GatherResources()
 	{
 	    if (_currentDistanceToTarget <= MaxHarvestDistance)
