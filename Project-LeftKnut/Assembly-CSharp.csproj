@@ -46,9 +46,12 @@
   <ItemGroup>
      <Compile Include="Assets\EnemyScript.cs" />
      <Compile Include="Assets\Gun_Projectile.cs" />
+     <Compile Include="Assets\Scripts\Credits.cs" />
      <Compile Include="Assets\Scripts\Gameplay.cs" />
      <Compile Include="Assets\Scripts\GuiTest.cs" />
+     <Compile Include="Assets\Scripts\MainMenu.cs" />
      <Compile Include="Assets\Scripts\RtsCamera.cs" />
+     <Compile Include="Assets\Scripts\TakesDamage.cs" />
      <Compile Include="Assets\Scripts\TurretControl.cs" />
      <Compile Include="Assets\Scripts\scriptCanSelect.cs" />
      <Compile Include="Assets\Scripts\scriptHarvester.cs" />

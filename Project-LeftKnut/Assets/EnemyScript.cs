@@ -8,6 +8,12 @@ public class EnemyScript : MonoBehaviour
     public float MoveSpeed = 1.0f;
     public int Health = 100;
     public bool IsAlive = true;
+    public float MinimumDistanceFromTarget = 14.0f;
+    public int DamageDealtPerAttack = 50;
+    public float AttackDelay = 2f;
+
+    private float _currentDistanceToTarget;
+    private float _timeSinceLastAttack = 2f;
 
 	// Use this for initialization
 	void Start ()
@@ -19,12 +25,23 @@ public class EnemyScript : MonoBehaviour
     {
         if (IsAlive)
         {
-            MoveToTarget();            
+            if (ClosestTarget)
+            {
+                
+            GetDistanceToTarget();
+
+            if (_currentDistanceToTarget > MinimumDistanceFromTarget)
+                MoveToTarget();
+            else
+                AttackTarget();
+            }
+            else
+            {
+                GetTarget();
+            }
         }
         else
-        {
             Destroy(gameObject);
-        }
     }
 	
 	void OnTriggerEnter(Collider collision) 
@@ -43,12 +60,34 @@ public class EnemyScript : MonoBehaviour
     
     private void AttackTarget()
     {
+        if (ClosestTarget)
+        {
+            var script = ClosestTarget.GetComponent<TakesDamage>();
+
+            if (script)
+            {
+                _timeSinceLastAttack += Time.deltaTime;
+
+                if (_timeSinceLastAttack > AttackDelay)
+                {
+                    script.TakeDamage(DamageDealtPerAttack);
+                    _timeSinceLastAttack = 0f;
+                }
+            }
+        }
     }
     private void MoveToTarget()
     {
         if (ClosestTarget)
         {
-            transform.position = Vector3.Lerp(transform.position, ClosestTarget.transform.position, MoveSpeed * Time.deltaTime);
+                transform.position = Vector3.Lerp(transform.position, ClosestTarget.transform.position, MoveSpeed * Time.deltaTime);
+        }
+    }
+    private void GetDistanceToTarget()
+    {
+        if (ClosestTarget)
+        {
+            _currentDistanceToTarget = Vector3.Distance(transform.position, ClosestTarget.transform.position);
         }
     }
     private void GetTarget()
