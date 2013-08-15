@@ -38,7 +38,7 @@ public class GuiTest : MonoBehaviour {
 	
 	void OnGUI()
 	{
-		if(GUI.Button(new Rect(0,0,100,50),"Add Turret"))
+		if(GUI.Button(new Rect(0,100,100,50),"Add Turret"))
 		{
 			_isObjectAttached = true;
 			_ObjectAttaced = (GameObject)Instantiate(Resources.Load("Turret"));;

@@ -11,12 +11,41 @@ public class scriptPlayer : MonoBehaviour {
     private float _timeSinceLevelStart = 0.0f;
     private float _timeSinceLastWave = 0.0f;
     private int _currentEnemyWave = 0;
+    private int _score = 0;
 
     void Update()
     {
-        HandleUserInput();
+        var silo = GameObject.FindGameObjectWithTag("silo");
 
-        HandleEnemyWaves();
+        if (silo)
+        {
+            HandleUserInput();
+
+            HandleEnemyWaves();            
+        }
+        else
+        {
+            // Game over
+            print("Game Over!!");
+        }
+    }
+    void OnGUI()
+    {
+        var silo = GameObject.FindGameObjectWithTag("silo");
+        var siloScript = silo.GetComponent<scriptSilo>();
+
+        GUI.Label(new Rect(0, 0, 50, 20), "Score: " + _score);
+        GUI.Label(new Rect(0, 30, 50, 20), "Wave: " + _currentEnemyWave);
+
+        if (siloScript)
+        {
+            GUI.Label(new Rect(0, 60, 100, 20), "Resources: " + siloScript.GetResourceCount());            
+        }
+    }
+
+    public void IncreaseScore()
+    {
+        _score++;
     }
 
     private void HandleEnemyWaves()
@@ -119,7 +148,7 @@ public class scriptPlayer : MonoBehaviour {
     }
     private void SpawnEnemyWave()
     {
-        for (int i = 0; i < _currentEnemyWave; i++)
+        for (int i = 0; i < _currentEnemyWave + 1; i++)
         {
             SpawnEnemy();
         }

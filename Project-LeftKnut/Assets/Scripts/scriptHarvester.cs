@@ -13,6 +13,10 @@ public class scriptHarvester : MonoBehaviour {
     private float _currentDistanceToTarget;
     private Transform _target;
 	
+    void Start()
+    {
+        _harvestRateCounter = HarvestRateInSeconds;
+    }
 	
 	void Update () 
 	{

@@ -27,13 +27,13 @@ public class EnemyScript : MonoBehaviour
         {
             if (ClosestTarget)
             {
-                
-            GetDistanceToTarget();
 
-            if (_currentDistanceToTarget > MinimumDistanceFromTarget)
-                MoveToTarget();
-            else
-                AttackTarget();
+                GetDistanceToTarget();
+
+                if (_currentDistanceToTarget > MinimumDistanceFromTarget)
+                    MoveToTarget();
+                else
+                    AttackTarget();
             }
             else
             {
@@ -41,7 +41,20 @@ public class EnemyScript : MonoBehaviour
             }
         }
         else
+        {
             Destroy(gameObject);
+            var playerGameObject = GameObject.FindGameObjectWithTag("Player");
+
+            if (playerGameObject)
+            {
+                var script = playerGameObject.GetComponent<scriptPlayer>();
+
+                if (script)
+                {
+                    script.IncreaseScore();
+                }
+            }
+        }
     }
 	
 	void OnTriggerEnter(Collider collision) 
