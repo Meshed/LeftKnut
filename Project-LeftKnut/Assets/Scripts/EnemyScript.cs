@@ -6,8 +6,6 @@ public class EnemyScript : MonoBehaviour
 {
     public GameObject ClosestTarget;
     public float MoveSpeed = 1.0f;
-    public int Health = 100;
-    public bool IsAlive = true;
     public float MinimumDistanceFromTarget = 14.0f;
     public int DamageDealtPerAttack = 50;
     public float AttackDelay = 2f;
@@ -15,15 +13,15 @@ public class EnemyScript : MonoBehaviour
     private float _currentDistanceToTarget;
     private float _timeSinceLastAttack = 2f;
 
-	// Use this for initialization
 	void Start ()
 	{
         GetTarget();
 	}
-
     void Update()
     {
-        if (IsAlive)
+        var takesDamageComponent = transform.GetComponent<TakesDamage>();
+
+        if (takesDamageComponent.IsAlive)
         {
             if (ClosestTarget)
             {
@@ -42,32 +40,19 @@ public class EnemyScript : MonoBehaviour
         }
         else
         {
-            Destroy(gameObject);
             var playerGameObject = GameObject.FindGameObjectWithTag("Player");
 
             if (playerGameObject)
             {
-                var script = playerGameObject.GetComponent<scriptPlayer>();
+                var scriptPlayerComponent = playerGameObject.GetComponent<scriptPlayer>();
 
-                if (script)
+                if (scriptPlayerComponent)
                 {
-                    script.IncreaseScore();
+                    scriptPlayerComponent.IncreaseScore();
                 }
             }
-        }
-    }
-	
-	void OnTriggerEnter(Collider collision) 
-	{
-        TakeDamage(2);
-        Destroy(collision);
-	}
-    public void TakeDamage(int damage)
-    {
-        Health -= damage;
-        if (Health < 0)
-        {
-            IsAlive = false;
+
+            Destroy(gameObject);
         }
     }
     
@@ -93,7 +78,9 @@ public class EnemyScript : MonoBehaviour
     {
         if (ClosestTarget)
         {
-                transform.position = Vector3.Lerp(transform.position, ClosestTarget.transform.position, MoveSpeed * Time.deltaTime);
+            //transform.position = Vector3.Lerp(transform.position, ClosestTarget.transform.position, MoveSpeed * Time.deltaTime);
+            transform.LookAt(ClosestTarget.transform.position);
+            transform.Translate(Vector3.forward * MoveSpeed * Time.deltaTime, Space.Self);
         }
     }
     private void GetDistanceToTarget()

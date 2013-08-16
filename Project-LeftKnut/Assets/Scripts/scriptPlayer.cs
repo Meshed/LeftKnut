@@ -34,12 +34,28 @@ public class scriptPlayer : MonoBehaviour {
         var silo = GameObject.FindGameObjectWithTag("silo");
         var siloScript = silo.GetComponent<scriptSilo>();
 
-        GUI.Label(new Rect(0, 0, 50, 20), "Score: " + _score);
-        GUI.Label(new Rect(0, 30, 50, 20), "Wave: " + _currentEnemyWave);
+        float labelWidth = 150f;
+        float halfLabelWidth = labelWidth/2f;
+        float halfScreenWidth = Screen.width/2f;
+        int nextWaveIn = 0;
+
+        GUI.Label(new Rect(0, 0, 100, 20), "Score: " + _score);
+        GUI.Label(new Rect(0, 30, 100, 20), "Wave: " + _currentEnemyWave);
 
         if (siloScript)
         {
             GUI.Label(new Rect(0, 60, 100, 20), "Resources: " + siloScript.GetResourceCount());            
+        }
+
+        if (_currentEnemyWave == 0)
+        {
+            nextWaveIn = (int)(FirstEnemySpawnTimer - _timeSinceLevelStart);
+            GUI.Label(new Rect(halfScreenWidth - halfLabelWidth, 0, labelWidth, 20), "Next Wave In: " + nextWaveIn.ToString("D2"));
+        }
+        else
+        {
+            nextWaveIn = (int) (EnemyWaveSpawnTimer - _timeSinceLastWave);
+            GUI.Label(new Rect(halfScreenWidth - halfLabelWidth, 0, labelWidth, 20), "Next Wave In: " + nextWaveIn.ToString("D2"));
         }
     }
 
@@ -148,7 +164,7 @@ public class scriptPlayer : MonoBehaviour {
     }
     private void SpawnEnemyWave()
     {
-        for (int i = 0; i < _currentEnemyWave + 1; i++)
+        for (int i = 0; i < ((_currentEnemyWave+1)*(_currentEnemyWave+1)); i++)
         {
             SpawnEnemy();
         }

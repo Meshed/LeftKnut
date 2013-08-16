@@ -20,4 +20,19 @@ public class Gun_Projectile : MonoBehaviour {
 		if(distance > _Range)
 			Destroy(gameObject);
 	}
+
+    void OnTriggerEnter(Collider collision)
+    {
+        if (collision.tag.Contains("enemy"))
+        {
+            var takesDamageComponent = collision.GetComponent<TakesDamage>();
+
+            if (takesDamageComponent)
+            {
+                takesDamageComponent.TakeDamage(17);
+            }
+
+            Destroy(gameObject);
+        }
+    }
 }
