@@ -7,32 +7,47 @@ public class scriptPlayer : MonoBehaviour {
     public GameObject Enemy;
     public float FirstEnemySpawnTimer = 15.0f;
     public float EnemyWaveSpawnTimer = 10.0f;
+    public AudioClip WaveSpawnNotification;
+    public bool GameOver;
 
     private float _timeSinceLevelStart = 0.0f;
     private float _timeSinceLastWave = 0.0f;
     private int _currentEnemyWave = 0;
     private int _score = 0;
+    private int _spawnA = 0;
+    private int _spawnB = 1;
 
     void Update()
     {
         var silo = GameObject.FindGameObjectWithTag("silo");
 
-        if (silo)
+        if (!GameOver)
         {
-            HandleUserInput();
+            if (silo)
+            {
+                HandleUserInput();
 
-            HandleEnemyWaves();            
-        }
-        else
-        {
-            // Game over
-            print("Game Over!!");
+                HandleEnemyWaves();
+            }
+            else
+            {
+                GameOver = true;
+                Time.timeScale = 0;
+            }
         }
     }
     void OnGUI()
     {
         var silo = GameObject.FindGameObjectWithTag("silo");
-        var siloScript = silo.GetComponent<scriptSilo>();
+
+        if (silo)
+        {
+            var siloScript = silo.GetComponent<scriptSilo>();
+            if (siloScript)
+            {
+                GUI.Label(new Rect(0, 60, 100, 20), "Resources: " + siloScript.GetResourceCount());
+            }
+        }
 
         float labelWidth = 150f;
         float halfLabelWidth = labelWidth/2f;
@@ -42,10 +57,6 @@ public class scriptPlayer : MonoBehaviour {
         GUI.Label(new Rect(0, 0, 100, 20), "Score: " + _score);
         GUI.Label(new Rect(0, 30, 100, 20), "Wave: " + _currentEnemyWave);
 
-        if (siloScript)
-        {
-            GUI.Label(new Rect(0, 60, 100, 20), "Resources: " + siloScript.GetResourceCount());            
-        }
 
         if (_currentEnemyWave == 0)
         {
@@ -164,10 +175,20 @@ public class scriptPlayer : MonoBehaviour {
     }
     private void SpawnEnemyWave()
     {
-        for (int i = 0; i < ((_currentEnemyWave+1)*(_currentEnemyWave+1)); i++)
+        if (WaveSpawnNotification)
+        {
+            audio.PlayOneShot(WaveSpawnNotification);
+        }
+
+        int spawnCount = _spawnA + _spawnB;
+
+        for (int i = 0; i < spawnCount; i++)
         {
             SpawnEnemy();
         }
+
+        _spawnA = _spawnB;
+        _spawnB = spawnCount;
     }
     private void SpawnEnemy()
     {
@@ -176,7 +197,7 @@ public class scriptPlayer : MonoBehaviour {
         var rightSpawnPosition = new Vector3(150f, 0, Random.Range(0f, 150f));
         var bottomSpawnPosition = new Vector3(Random.Range(-100f, 100f), 0f, -33f);
         var leftSpawnPosition = new Vector3(-140f, 0f, Random.Range(0f, 150f));
-        int enemySpawnNode = Random.Range(1, 4);
+        int enemySpawnNode = Random.Range(1, 5);
 
         switch (enemySpawnNode)
         {

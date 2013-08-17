@@ -12,6 +12,8 @@ public class EnemyScript : MonoBehaviour
 
     private float _currentDistanceToTarget;
     private float _timeSinceLastAttack = 2f;
+    private bool _gameOver;
+    private bool _scoreUpdated;
 
 	void Start ()
 	{
@@ -19,43 +21,52 @@ public class EnemyScript : MonoBehaviour
 	}
     void Update()
     {
-        var takesDamageComponent = transform.GetComponent<TakesDamage>();
-
-        if (takesDamageComponent.IsAlive)
+        var player = GameObject.FindGameObjectWithTag("Player");
+        if (!player.GetComponent<scriptPlayer>().GameOver)
         {
-            if (ClosestTarget)
+            var takesDamageComponent = transform.GetComponent<TakesDamage>();
+
+            if (takesDamageComponent.IsAlive)
             {
+                if (ClosestTarget)
+                {
+                    GetDistanceToTarget();
 
-                GetDistanceToTarget();
-
-                if (_currentDistanceToTarget > MinimumDistanceFromTarget)
-                    MoveToTarget();
+                    if (_currentDistanceToTarget > MinimumDistanceFromTarget)
+                        MoveToTarget();
+                    else
+                        AttackTarget();
+                }
                 else
-                    AttackTarget();
+                {
+                    GetTarget();
+                }
             }
             else
             {
-                GetTarget();
-            }
-        }
-        else
-        {
-            var playerGameObject = GameObject.FindGameObjectWithTag("Player");
-
-            if (playerGameObject)
-            {
-                var scriptPlayerComponent = playerGameObject.GetComponent<scriptPlayer>();
-
-                if (scriptPlayerComponent)
+                if (!_scoreUpdated)
                 {
-                    scriptPlayerComponent.IncreaseScore();
+                    UpdatePlayerScore();
+                    _scoreUpdated = true;
                 }
             }
-
-            Destroy(gameObject);
         }
     }
-    
+
+    private static void UpdatePlayerScore()
+    {
+        var playerGameObject = GameObject.FindGameObjectWithTag("Player");
+
+        if (playerGameObject)
+        {
+            var scriptPlayerComponent = playerGameObject.GetComponent<scriptPlayer>();
+
+            if (scriptPlayerComponent)
+            {
+                scriptPlayerComponent.IncreaseScore();
+            }
+        }
+    }
     private void AttackTarget()
     {
         if (ClosestTarget)

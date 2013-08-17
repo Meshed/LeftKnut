@@ -10,6 +10,7 @@ public class TurretControl : MonoBehaviour {
 	public float _AimError = 1f;
     public float AimSpeed = 3.0f;
 	public GameObject CurrentTarget;
+    public AudioClip TurretFire;
 
 	float _timeSinceLastFiring;
 	private bool _isPlaced = false;
@@ -40,15 +41,21 @@ public class TurretControl : MonoBehaviour {
 		
 			if(_timeSinceLastFiring > FireRate)
 			{
-				_timeSinceLastFiring = 0;
-				
-				foreach(Transform muzzel in _Muzzles)
-				{
-					Instantiate(_Bullet, muzzel.position, muzzel.rotation);
-				}
+			    FireTurret();
 			}
 		}
 	}
+
+    private void FireTurret()
+    {
+        _timeSinceLastFiring = 0;
+
+        foreach (Transform muzzel in _Muzzles)
+        {
+            Instantiate(_Bullet, muzzel.position, muzzel.rotation);
+            audio.PlayOneShot(TurretFire);
+        }
+    }
 
     public void PlaceTurret()
     {
@@ -89,6 +96,4 @@ public class TurretControl : MonoBehaviour {
 		
 		return closest;
 	}
-	
-	
 }

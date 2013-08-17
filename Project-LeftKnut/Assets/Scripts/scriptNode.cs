@@ -3,15 +3,13 @@ using UnityEngine;
 public class scriptNode : MonoBehaviour {
 	public int HarvestRate = 10;
 	public int TotalHarvestRemaining = 100;
-	public Transform Explosion;
 
     private bool _isAlive = true;
 
 	void Update () {
-	    if (_isAlive == false)
+	    if (!_isAlive)
 	    {
-            print("Node is empty");
-            Destroy(gameObject);
+	        Destroy(gameObject);
 	    }
 	}
 
@@ -19,12 +17,6 @@ public class scriptNode : MonoBehaviour {
 	{
 	    if (TotalHarvestRemaining > 0)
 	    {
-		    if(Explosion)
-		    {
-			    var temp = (Transform)Instantiate(Explosion, transform.position, transform.rotation);
-			    Destroy(temp.gameObject, temp.particleSystem.duration + temp.particleSystem.startLifetime);
-		    }
-
 	        int harvestedAmount = GetHarvestAmount();
             DescreaseRemainingHarvest();
 

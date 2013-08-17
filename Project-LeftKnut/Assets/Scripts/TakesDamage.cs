@@ -5,15 +5,22 @@ public class TakesDamage : MonoBehaviour
 {
     public int Health = 100;
     public bool IsAlive = true;
+    public AudioClip DestroyAudio;
 
-	// Update is called once per frame
-	void Update () 
+    private bool _audioPlaying;
+
+    public void Update()
     {
         if (!IsAlive)
         {
-            Destroy(gameObject);
+            if (!_audioPlaying)
+            {
+                audio.PlayOneShot(DestroyAudio);
+                _audioPlaying = true;
+            }
+            Destroy(gameObject, DestroyAudio.length);
         }
-	}
+    }
 
     public void TakeDamage(int damage)
     {

@@ -23,7 +23,6 @@ public class scriptCanSelect : MonoBehaviour {
 		if(body != null)
 		{
         	body.renderer.material = SelectedMaterial;
-			print ("Selected Material updated!");
 		}
     }
     void SetToStandardColor()
@@ -32,7 +31,6 @@ public class scriptCanSelect : MonoBehaviour {
 		if(body != null)
 		{
         	body.renderer.material = StandardMaterial;
-			print ("Standard Material updated!");
 		}
     }
 }
