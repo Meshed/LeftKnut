@@ -15,12 +15,9 @@ public class TurretControl : MonoBehaviour {
 	float _timeSinceLastFiring;
 	private bool _isPlaced = false;
 	
-	// Use this for initialization
 	void Start () {
 		
 	}
-	
-	// Update is called once per frame
 	void Update () {
 	    if (!_isPlaced)
 	    {
@@ -45,6 +42,10 @@ public class TurretControl : MonoBehaviour {
 			}
 		}
 	}
+    public void PlaceTurret()
+    {
+        _isPlaced = true;
+    }
 
     private void FireTurret()
     {
@@ -56,12 +57,6 @@ public class TurretControl : MonoBehaviour {
             audio.PlayOneShot(TurretFire);
         }
     }
-
-    public void PlaceTurret()
-    {
-        _isPlaced = true;
-    }
-	
 	private void AimTowardsTarget()
 	{
 		var targetDir = CurrentTarget.transform.position - _GunForward.position;
@@ -71,12 +66,10 @@ public class TurretControl : MonoBehaviour {
 		
 		_GunForward.rotation =  Quaternion.Lerp(_GunForward.rotation, desiredRotation, AimSpeed * Time.deltaTime);
 	}
-	
 	private float GetAimError()
 	{
 		return Random.Range(-_AimError,_AimError);
 	}
-	
 	private GameObject FindClosestEnemy(){
 		
 		GameObject[] gos = GameObject.FindGameObjectsWithTag("enemy");

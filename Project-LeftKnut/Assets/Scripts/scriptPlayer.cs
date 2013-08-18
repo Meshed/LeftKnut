@@ -10,12 +10,15 @@ public class scriptPlayer : MonoBehaviour {
     public AudioClip WaveSpawnNotification;
     public bool GameOver;
 
-    private float _timeSinceLevelStart = 0.0f;
-    private float _timeSinceLastWave = 0.0f;
-    private int _currentEnemyWave = 0;
-    private int _score = 0;
-    private int _spawnA = 0;
+    private float _timeSinceLevelStart;
+    private float _timeSinceLastWave;
+    private int _currentEnemyWave;
+    private int _currentEnemyCount;
+    private int _score;
+    private int _spawnA;
     private int _spawnB = 1;
+    private bool _isObjectAttached;
+    private GameObject _objectAttaced;
 
     void Update()
     {
@@ -26,8 +29,27 @@ public class scriptPlayer : MonoBehaviour {
             if (silo)
             {
                 HandleUserInput();
-
+                UpdateEnemyCount();
                 HandleEnemyWaves();
+
+                if (_isObjectAttached && Input.GetMouseButtonDown(0))
+                {
+                    var turretScript = _objectAttaced.transform.GetComponent<TurretControl>();
+                    turretScript.PlaceTurret();
+                    _isObjectAttached = false;
+                    _objectAttaced = null;
+                }
+
+                if (_objectAttaced)
+                {
+                    RaycastHit hit;
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                    if (Physics.Raycast(ray, out hit))
+                    {
+                        _objectAttaced.transform.position = hit.point;
+                    }
+                }
             }
             else
             {
@@ -37,6 +59,54 @@ public class scriptPlayer : MonoBehaviour {
         }
     }
     void OnGUI()
+    {
+        DisplayResources();
+
+        const float labelWidth = 150f;
+        const float halfLabelWidth = labelWidth/2f;
+        float halfScreenWidth = Screen.width/2f;
+
+        GUI.Label(new Rect(0, 0, 100, 20), "Score: " + _score);
+        GUI.Label(new Rect(0, 30, 100, 20), "Wave: " + _currentEnemyWave);
+
+        DisplayWaveDetails(labelWidth, halfScreenWidth, halfLabelWidth);
+
+        if (GUI.Button(new Rect(0, 100, 100, 50), "Add Turret"))
+        {
+            _isObjectAttached = true;
+            _objectAttaced = (GameObject)Instantiate(Resources.Load("Turret")); ;
+
+        }
+    }
+    public void IncreaseScore()
+    {
+        _score++;
+    }
+
+    private void DisplayWaveDetails(float labelWidth, float halfScreenWidth, float halfLabelWidth)
+    {
+        if (_currentEnemyCount > 0)
+        {
+            GUI.Label(new Rect(halfScreenWidth - halfLabelWidth, 0, labelWidth, 20),
+                      "Enemies Remaining: " + _currentEnemyCount);
+        }
+        else
+        {
+            int nextWaveIn = _currentEnemyWave == 0
+                                 ? (int) (FirstEnemySpawnTimer - _timeSinceLevelStart)
+                                 : (int) (EnemyWaveSpawnTimer - _timeSinceLastWave);
+
+            GUI.Label(new Rect(halfScreenWidth - halfLabelWidth, 0, labelWidth, 20),
+                      "Next Wave In: " + nextWaveIn.ToString("D2"));
+        }
+    }
+    private void UpdateEnemyCount()
+    {
+        GameObject[] enemyList = GameObject.FindGameObjectsWithTag("enemy");
+
+         _currentEnemyCount = enemyList.GetLength(0);
+    }
+    private static void DisplayResources()
     {
         var silo = GameObject.FindGameObjectWithTag("silo");
 
@@ -48,33 +118,7 @@ public class scriptPlayer : MonoBehaviour {
                 GUI.Label(new Rect(0, 60, 100, 20), "Resources: " + siloScript.GetResourceCount());
             }
         }
-
-        float labelWidth = 150f;
-        float halfLabelWidth = labelWidth/2f;
-        float halfScreenWidth = Screen.width/2f;
-        int nextWaveIn = 0;
-
-        GUI.Label(new Rect(0, 0, 100, 20), "Score: " + _score);
-        GUI.Label(new Rect(0, 30, 100, 20), "Wave: " + _currentEnemyWave);
-
-
-        if (_currentEnemyWave == 0)
-        {
-            nextWaveIn = (int)(FirstEnemySpawnTimer - _timeSinceLevelStart);
-            GUI.Label(new Rect(halfScreenWidth - halfLabelWidth, 0, labelWidth, 20), "Next Wave In: " + nextWaveIn.ToString("D2"));
-        }
-        else
-        {
-            nextWaveIn = (int) (EnemyWaveSpawnTimer - _timeSinceLastWave);
-            GUI.Label(new Rect(halfScreenWidth - halfLabelWidth, 0, labelWidth, 20), "Next Wave In: " + nextWaveIn.ToString("D2"));
-        }
     }
-
-    public void IncreaseScore()
-    {
-        _score++;
-    }
-
     private void HandleEnemyWaves()
     {
         if (_currentEnemyWave == 0)
@@ -89,13 +133,16 @@ public class scriptPlayer : MonoBehaviour {
         }
         else
         {
-            _timeSinceLastWave += Time.deltaTime;
-
-            if (_timeSinceLastWave > EnemyWaveSpawnTimer)
+            if (_currentEnemyCount <= 0)
             {
-                SpawnEnemyWave();
-                _currentEnemyWave++;
-                _timeSinceLastWave = 0f;
+                _timeSinceLastWave += Time.deltaTime;
+
+                if (_timeSinceLastWave > EnemyWaveSpawnTimer)
+                {
+                    SpawnEnemyWave();
+                    _currentEnemyWave++;
+                    _timeSinceLastWave = 0f;
+                }
             }
         }
     }
