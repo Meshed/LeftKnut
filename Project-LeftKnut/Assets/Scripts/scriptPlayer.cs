@@ -55,6 +55,7 @@ public class scriptPlayer : MonoBehaviour {
             {
                 GameOver = true;
                 Time.timeScale = 0;
+                GameObject.FindGameObjectWithTag("MainCamera").audio.Stop();
             }
         }
     }
@@ -65,17 +66,46 @@ public class scriptPlayer : MonoBehaviour {
         const float labelWidth = 150f;
         const float halfLabelWidth = labelWidth/2f;
         float halfScreenWidth = Screen.width/2f;
+        float halfScreenHeight = Screen.height/2f;
 
         GUI.Label(new Rect(0, 0, 100, 20), "Score: " + _score);
         GUI.Label(new Rect(0, 30, 100, 20), "Wave: " + _currentEnemyWave);
 
-        DisplayWaveDetails(labelWidth, halfScreenWidth, halfLabelWidth);
-
-        if (GUI.Button(new Rect(0, 100, 100, 50), "Add Turret"))
+        if (!GameOver)
         {
-            _isObjectAttached = true;
-            _objectAttaced = (GameObject)Instantiate(Resources.Load("Turret")); ;
+            DisplayWaveDetails(labelWidth, halfScreenWidth, halfLabelWidth);
 
+            if (GUI.Button(new Rect(0, 100, 100, 50), "Add Turret"))
+            {
+                _isObjectAttached = true;
+                _objectAttaced = (GameObject) Instantiate(Resources.Load("Turret"));
+            }
+        }
+        else
+        {
+            float gameOverWindowWidth = 400f;
+            float halfGameOverWindowWidth = gameOverWindowWidth/2;
+            float gameOverWindowHeight = 200f;
+            float halfGameoverWindowHeight = gameOverWindowHeight/2;
+
+            GUI.BeginGroup(new Rect(halfScreenWidth-halfGameOverWindowWidth, halfScreenHeight-halfGameoverWindowHeight, gameOverWindowWidth, gameOverWindowHeight));
+            GUI.Box(new Rect(0, 0, gameOverWindowWidth, gameOverWindowHeight), "Game Over");
+            GUI.Label(new Rect(10, 40, 300f, 20f), "Number of waves completed: " + (_currentEnemyWave - 1));
+            GUI.Label(new Rect(10, 60, 300f, 20f), "Number of enemies killed: " + _score);
+            if (GUI.Button(new Rect(50, 150, 100, 30), "Play Again"))
+            {
+                Application.LoadLevel("MainMenu");
+                Application.LoadLevel("Level");
+            }
+            if (GUI.Button(new Rect(gameOverWindowWidth-150, 150, 100, 30), "Main Menu"))
+            {
+                Application.LoadLevel("MainMenu");
+            }
+            GUI.EndGroup();
+            if (!GameObject.FindGameObjectWithTag("Player").audio.isPlaying)
+            {
+                GameObject.FindGameObjectWithTag("Player").audio.Play();
+            }
         }
     }
     public void IncreaseScore()
