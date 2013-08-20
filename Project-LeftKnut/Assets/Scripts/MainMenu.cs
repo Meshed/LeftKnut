@@ -20,13 +20,17 @@ public class MainMenu : MonoBehaviour {
         float halfButtonWidth = buttonHight/2f;
         float halfScreenWitdh = Screen.width/2f;
 
-        if (GUI.Button(new Rect(halfScreenWitdh - halfButtonWidth, Screen.height - (buttonHight*2) - 50, buttonWidth, buttonHight), "Play Game"))
+        if (GUI.Button(new Rect(halfScreenWitdh - halfButtonWidth, Screen.height - (buttonHight*3) - (20*3), buttonWidth, buttonHight), "Play Game"))
         {
             Application.LoadLevel("Level");
         }
-        if (GUI.Button(new Rect(halfScreenWitdh - halfButtonWidth, Screen.height - buttonHight - 40, buttonWidth, buttonHight), "Credits"))
+        if (GUI.Button(new Rect(halfScreenWitdh - halfButtonWidth, Screen.height - (buttonHight*2) - (20*2), buttonWidth, buttonHight), "Credits"))
         {
             Application.LoadLevel("Credits");
+        }
+        if (GUI.Button(new Rect(halfScreenWitdh - halfButtonWidth, Screen.height - buttonHight - 20, buttonWidth, buttonHight), "Exit"))
+        {
+            Application.Quit();
         }
     }
 }
