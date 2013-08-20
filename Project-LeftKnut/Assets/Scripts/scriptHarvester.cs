@@ -23,15 +23,17 @@ public class scriptHarvester : MonoBehaviour {
 	    GetTarget();
 		GetDistanceToTarget();
 		MoveToTarget();
-
-	    if (_target == TargetNode)
-	    {
-	        GatherResources();
-	    }
-	    else
-	    {
-	        DepositResources();
-	    }
+		if(_target != null && TargetNode != null)
+		{
+		    if (_target == TargetNode)
+		    {
+		        GatherResources();
+		    }
+		    else
+		    {
+		        DepositResources();
+		    }
+		}
 	}
 
     private void GetTarget()
