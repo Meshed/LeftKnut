@@ -17,8 +17,6 @@ public class scriptPlayer : MonoBehaviour {
     private int _score;
     private int _spawnA;
     private int _spawnB = 1;
-    private bool _isObjectAttached;
-    private GameObject _objectAttaced;
 
     void Update()
     {
@@ -31,25 +29,6 @@ public class scriptPlayer : MonoBehaviour {
                 HandleUserInput();
                 UpdateEnemyCount();
                 HandleEnemyWaves();
-
-                if (_isObjectAttached && Input.GetMouseButtonDown(0))
-                {
-                    var turretScript = _objectAttaced.transform.GetComponent<TurretControl>();
-                    turretScript.PlaceTurret();
-                    _isObjectAttached = false;
-                    _objectAttaced = null;
-                }
-
-                if (_objectAttaced)
-                {
-                    RaycastHit hit;
-                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                    if (Physics.Raycast(ray, out hit))
-                    {
-                        _objectAttaced.transform.position = hit.point;
-                    }
-                }
             }
             else
             {
@@ -75,11 +54,6 @@ public class scriptPlayer : MonoBehaviour {
         {
             DisplayWaveDetails(labelWidth, halfScreenWidth, halfLabelWidth);
 
-            if (GUI.Button(new Rect(0, 100, 100, 50), "Add Turret"))
-            {
-                _isObjectAttached = true;
-                _objectAttaced = (GameObject) Instantiate(Resources.Load("Turret"));
-            }
         }
         else
         {
@@ -197,13 +171,17 @@ public class scriptPlayer : MonoBehaviour {
 
         if (Physics.Raycast(ray, out hit, RayDistance))
         {
+            // Get target
+            Target = hit.transform;
+
+            // Deselect current target if new target can select
             if (Selected)
             {
 				Debug.Log(Selected);
                 Selected.GetComponent<scriptCanSelect>().Deselect();
             }
 
-            Target = hit.transform;
+            // Select new left click target
             SelectedLeftClickTarget();
         }
     }
@@ -247,7 +225,7 @@ public class scriptPlayer : MonoBehaviour {
         }
         else
         {
-            Selected = null;
+            //Selected = null;
         }
     }
     private void SpawnEnemyWave()
