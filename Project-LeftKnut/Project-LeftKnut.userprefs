@@ -1,12 +1,13 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\MainMenu.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\TakesDamage.cs">
     <Files>
       <File FileName="Assets\Scripts\MainMenu.cs" Line="1" Column="1" />
-      <File FileName="Assets\iTween\Plugins\iTween.cs" Line="54" Column="23" />
+      <File FileName="Assets\iTween\Plugins\iTween.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\scriptPlayer.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\scriptHarvester.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Credits.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\TakesDamage.cs" Line="23" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

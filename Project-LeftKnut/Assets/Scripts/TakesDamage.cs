@@ -13,12 +13,13 @@ public class TakesDamage : MonoBehaviour
     {
         if (!IsAlive)
         {
-            if (!_audioPlaying)
-            {
-                audio.PlayOneShot(DestroyAudio);
-                _audioPlaying = true;
-            }
-            Destroy(gameObject, DestroyAudio.length);
+            //if (!_audioPlaying)
+            //{
+            //    audio.PlayOneShot(DestroyAudio);
+            //    _audioPlaying = true;
+            //}
+			AudioSource.PlayClipAtPoint(DestroyAudio, transform.position);
+            Destroy(gameObject);
         }
     }
 
